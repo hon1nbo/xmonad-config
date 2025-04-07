@@ -1,6 +1,6 @@
 -- xmonad config used by Vic Fryzel
 -- Author: Vic Fryzel
--- http://github.com/vicfryzel/xmonad-config
+-- https://github.com/vicfryzel/xmonad-config
 
 import System.IO
 import System.Exit
@@ -29,7 +29,7 @@ import qualified Data.Map        as M
 myTerminal = "/usr/bin/gnome-terminal"
 
 -- The command to lock the screen or show the screensaver.
-myScreensaver = "/usr/bin/gnome-screensaver-command --lock"
+myScreensaver = "/usr/bin/xscreensaver-command -l"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
@@ -40,7 +40,10 @@ myScreenshot = "screenshot"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
-myLauncher = "$(yeganesh -x -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC')"
+myLauncher = "$(yeganesh -x -- -fn 'monospace-8' -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC')"
+
+-- Location of your xmobar.hs / xmobarrc
+myXmobarrc = "~/.xmonad/xmobar-single.hs"
 
 
 ------------------------------------------------------------------------
@@ -168,23 +171,23 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
   -- Decrease volume.
   , ((0, xF86XK_AudioLowerVolume),
-     spawn "amixer -q set Master 10%-")
+     spawn "amixer -q set Master 5%-")
 
   -- Increase volume.
   , ((0, xF86XK_AudioRaiseVolume),
-     spawn "amixer -q set Master 10%+")
- 
+     spawn "amixer -q set Master 5%+")
+
   -- Mute volume.
   , ((modMask .|. controlMask, xK_m),
      spawn "amixer -q set Master toggle")
 
   -- Decrease volume.
   , ((modMask .|. controlMask, xK_j),
-     spawn "amixer -q set Master 10%-")
+     spawn "amixer -q set Master 5%-")
 
   -- Increase volume.
   , ((modMask .|. controlMask, xK_k),
-     spawn "amixer -q set Master 10%+")
+     spawn "amixer -q set Master 5%+")
 
   -- Audio previous.
   , ((0, 0x1008FF16),
@@ -348,7 +351,7 @@ myStartupHook = return ()
 -- Run xmonad with all the defaults we set up.
 --
 main = do
-  xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.hs"
+  xmproc <- spawnPipe ("xmobar " ++ myXmobarrc)
   xmonad $ defaults {
       logHook = dynamicLogWithPP $ xmobarPP {
             ppOutput = hPutStrLn xmproc
@@ -357,7 +360,9 @@ main = do
           , ppSep = "   "
       }
       , manageHook = manageDocks <+> myManageHook
+--      , startupHook = docksStartupHook <+> setWMName "LG3D"
       , startupHook = setWMName "LG3D"
+      , handleEventHook = docksEventHook
   }
 
 

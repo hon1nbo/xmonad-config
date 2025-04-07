@@ -24,32 +24,39 @@ documented and simple to customize.
 
 ![Screenshot of xmonad-config](https://raw.github.com/vicfryzel/xmonad-config/master/screenshot.png)
 For source code, or to contribute, see the
-[xmonad-config project page](http://github.com/vicfryzel/xmonad-config).
+[xmonad-config project page](https://github.com/vicfryzel/xmonad-config).
 
 
 ## Requirements
 
-* xmonad 0.9.1 or 0.9.2
-* xmonad-contrib 0.9.1 or 0.9.2
-* [xmobar 0.11.1 or 0.13](http://projects.haskell.org/xmobar/)
-* [stalonetray 0.8.0](http://stalonetray.sourceforge.net/)
-* [dmenu 4.0](http://tools.suckless.org/dmenu/)
-* [yeganesh 2.2](http://dmwit.com/yeganesh/)
-* [scrot 0.8](http://freshmeat.net/projects/scrot/)
+* xmonad 0.13
+* xmonad-contrib 0.13
+* [xmobar 0.24.5](https://github.com/jaor/xmobar)
+* [consolekit 0.4.6](https://www.freedesktop.org/wiki/Software/ConsoleKit/)
+* [stalonetray 0.8.1](http://stalonetray.sourceforge.net/)
+* [dmenu 4.7](https://tools.suckless.org/dmenu/)
+* [yeganesh 2.5](http://dmwit.com/yeganesh/)
+* [scrot 0.8](https://en.wikipedia.org/wiki/Scrot)
 
-### Installing requirements on [Arch Linux](http://www.archlinux.org/)
+### Installing requirements on [Arch Linux](https://www.archlinux.org/)
 
     sudo pacman -S xmonad xmonad-contrib xmobar stalonetray dmenu scrot \
         cabal-install xcompmgr
     sudo cabal update
     cabal install --global yeganesh
+    
+Also install the [consolekit-git](https://wiki.archlinux.org/index.php/ConsoleKit)
+package from the AUR. The process for doing this is documented
+[here](https://wiki.archlinux.org/index.php/Arch_User_Repository).
 
-### Installing requirements on [Ubuntu Linux](http://www.ubuntu.com/)
+
+### Installing requirements on [Ubuntu Linux](https://www.ubuntu.com/) or [Debian Linux](https://www.debian.org)
 
     sudo aptitude install xmonad libghc-xmonad-contrib-dev xmobar stalonetray \
-        suckless-tools scrot cabal-install xcompmgr
+        suckless-tools scrot cabal-install xcompmgr consolekit
     sudo cabal update
     sudo cabal install --global yeganesh
+
 
 ## Installation
 
@@ -66,13 +73,17 @@ here are some instructions for some common login managers.
 
 ### Starting xmonad from lightdm, xdm, kdm, or gdm
 
-    ln -s ~/.xmonad/bin/xsession ~/.xsession
+Note: You may need to choose "Custom xsession" or similar at the login screen.
+
+    ln -s ~/.xmonad/xmonad-session-rc ~/.xsession
     # Logout, login from lightdm/xdm/kdm/gdm
+
 
 ### Starting xmonad from slim
 
-    ln -s ~/.xmonad/bin/xsession ~/.xinitrc
+    ln -s ~/.xmonad/xmonad-session-rc ~/.xinitrc
     # Logout, login from slim
+
 
 
 ## Keyboard shortcuts
@@ -119,6 +130,7 @@ get stranded once you logout and back in.
 | <kbd>Alt</kbd>+<kbd>Right Mouse Drag</kbd> | Resize focused window, bring out of tiling if needed |
 
 
+
 ## Personalizing or modifying xmonad-config
 
 Once cloned, xmonad-config is laid out as follows.
@@ -128,11 +140,43 @@ things like key bindings, colors, layouts, etc.  You may need to have some
 basic understanding of [Haskell](https://wiki.haskell.org/Haskell)
 in order to modify this file, but most people have no problems.
 
-Most of the xmobar configuration is in ~/.xmonad/xmobar.hs.
+All other configuration files are in ~/.xmonad.
 
 All scripts are in ~/.xmonad/bin/.  Scripts are provided to do things like
-take screenshots, start the system tray, start dmenu, or fix your multi-head
-layout after a fullscreen application may have turned off one of the screens. 
+take screenshots, start dmenu, or fix your multi-head layout after a
+fullscreen application may have turned off one of the screens. 
 
 Colors set in the xmobar config and dmenu script are meant to coincide with the
-[IR_Black terminal and vim themes](http://toddwerth.com/2008/04/30/the-last-vim-color-scheme-youll-ever-need/).
+IR_Black [terminal](https://github.com/Frizz925/base16-gnome-terminal/blob/master/schemes/base16-ir-black.sh)
+and [vim](http://vimcolors.com/196/ir_black/dark) themes.
+
+### Configuring xmobar and stalonetray for your displays
+
+xmonad-config is pre-configured to work on one of two display setups.
+
+1. Single 4K (3840x2160) resolution display.
+2. Dual 2560x1440 displays, with the right display as the primary.
+
+If your display setup is different, you need to edit the xmobar and
+stalonetray configurations provided, probably just to adjust the geometry of
+the bars for your resolution. An example would be if you're using
+xmonad-config on a laptop with a lower resolution screen. In this example,
+you'd simply need to edit the geometries in `xmobar-single.hs` and
+`stalonetrayrc-single`.
+
+When you first clone xmonad-config, it is setup to use the single display
+configuration files.
+
+To switch between the single and dual display setups, you must edit
+`xmonad-session-rc` and `xmonad.hs` to point to the appropriate config files.
+
+In `xmonad-session-rc` change the stalonetray line to read:
+
+    stalonetray -c ~/.xmonad/stalonetrayrc-dual
+
+In `xmonad.hs` change the `myXmobarrc` line to read:
+
+     myXmobarrc = "~/.xmonad/xmobar-dual.hs"
+
+To update geometries, edit `xmobar-single.hs` and `stalonetrayrc-single`, or
+edit `xmobar-dual.hs` and `stalonetrayrc-dual`.
